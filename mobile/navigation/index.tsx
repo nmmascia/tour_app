@@ -111,8 +111,8 @@ function BottomTabNavigator() {
         name="Tour"
         component={TourScreen}
         options={{
-          title: "Tour",
-          tabBarIcon: ({ color }) => <TabBarIcon name="code" color={color} />,
+          headerShown: false,
+          tabBarIcon: ({ color }) => <TabBarIcon name="map" color={color} />,
         }}
       />
     </BottomTab.Navigator>

@@ -28,7 +28,27 @@ export type RootStackScreenProps<Screen extends keyof RootStackParamList> =
 export type RootTabParamList = {
   Home: undefined;
   Tour: {
+    TourHome: {
+      tourId: string;
+    };
+    TourLocation: {
+      tourLocationId: string;
+    };
+  };
+};
+
+export type ScreenStackParamList = {
+  Tour: NavigatorScreenParams<ScreenParamList> | undefined;
+};
+
+export type ScreenParamList = {
+  TourHome: {
     tourId: string;
+    tourName: string;
+  };
+  TourLocation: {
+    tourLocationId: string;
+    tourLocationName: string;
   };
 };
 
@@ -36,4 +56,10 @@ export type RootTabScreenProps<Screen extends keyof RootTabParamList> =
   CompositeScreenProps<
     BottomTabScreenProps<RootTabParamList, Screen>,
     NativeStackScreenProps<RootStackParamList>
+  >;
+
+export type TourScreenProps<Screen extends keyof ScreenParamList> =
+  CompositeScreenProps<
+    NativeStackScreenProps<ScreenParamList, Screen>,
+    NativeStackScreenProps<ScreenStackParamList>
   >;

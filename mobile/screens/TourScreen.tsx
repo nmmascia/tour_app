@@ -1,82 +1,56 @@
-import { StyleSheet } from "react-native";
+import { createNativeStackNavigator } from "@react-navigation/native-stack";
+import TourHomeScreen from "./TourHomeScreen";
+import TourLocationScreen from "./TourLocationScreen";
+import { FontAwesome } from "@expo/vector-icons";
+import { Pressable } from "react-native";
+import Colors from "../constants/Colors";
 
-import { Text, View } from "../components/Themed";
-import { RootTabScreenProps } from "../types";
-import { gql } from "graphql-request";
-import { useQuery } from "react-query";
-import client from "../api/client";
-import { ActivityIndicator } from "react-native";
+const TourStack = createNativeStackNavigator();
 
-const query = gql`
-  query Tour($id: ID!) {
-    tour(id: $id) {
-      id
-      name
-      tourMembers {
-        id
-        admin
-        user {
-          id
-          username
-          name
-        }
-      }
-      tourLocations {
-        id
-        location {
-          address
-          name
-        }
-      }
-    }
-  }
-`;
-
-const TourScreen = ({
-  navigation: _navigation,
-  route,
-}: RootTabScreenProps<"Tour">) => {
-  const {
-    params: { tourId },
-  } = route;
-
-  const variables = {
-    id: tourId,
-  };
-
-  const { data, isLoading } = useQuery(
-    ["tour", JSON.stringify(variables)],
-    async () => client.request(query, variables)
-  );
-
+const TourScreen = () => {
   return (
-    <View style={styles.container}>
-      {isLoading ? (
-        <ActivityIndicator size="large" />
-      ) : (
-        <View>
-          <Text>{data.tour.name}</Text>
-        </View>
-      )}
-    </View>
+    <TourStack.Navigator initialRouteName="TourHome">
+      <TourStack.Screen
+        name="TourHome"
+        component={TourHomeScreen}
+        options={({ navigation, route }) => {
+          const {
+            params: { tourName },
+          } = route;
+
+          return {
+            title: tourName,
+            headerRight: () => {
+              return (
+                <Pressable
+                  onPress={() => navigation.navigate("Modal")}
+                  style={({ pressed }) => ({
+                    opacity: pressed ? 0.5 : 1,
+                  })}
+                >
+                  <FontAwesome
+                    name="plus-circle"
+                    size={25}
+                    // color={Colors[colorScheme].text}
+                    style={{ marginRight: 15 }}
+                  />
+                </Pressable>
+              );
+            },
+          };
+        }}
+      />
+      <TourStack.Screen
+        name="TourLocation"
+        component={TourLocationScreen}
+        options={(props) => {
+          return {
+            title: props.route.params.tourLocationName,
+          };
+        }}
+      />
+    </TourStack.Navigator>
   );
 };
-
-const styles = StyleSheet.create({
-  container: {
-    flex: 1,
-    alignItems: "center",
-    justifyContent: "center",
-  },
-  title: {
-    fontSize: 20,
-    fontWeight: "bold",
-  },
-  separator: {
-    marginVertical: 30,
-    height: 1,
-    width: "80%",
-  },
-});
 
 export default TourScreen;

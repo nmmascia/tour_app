@@ -1,16 +1,13 @@
-import {
-  ActivityIndicator,
-  StyleSheet,
-  FlatList,
-  TouchableHighlight,
-} from "react-native";
+import { ActivityIndicator, StyleSheet } from "react-native";
 
 import { View, Text } from "../components/Themed";
 import { RootTabScreenProps } from "../types";
 import { useQuery } from "react-query";
 import { gql } from "graphql-request";
 import client from "../api/client";
-import { ListItem, Avatar } from "react-native-elements";
+import { Avatar } from "react-native-elements";
+
+import TouchableTextList from "../components/TouchableTextList";
 
 const query = gql`
   query User {
@@ -50,27 +47,21 @@ const ProfileScreen = ({ navigation }: RootTabScreenProps<"Home">) => {
             <Text style={styles.title}>{data.user.name}</Text>
             <Text style={styles.title}>{data.user.username}</Text>
           </View>
-          <FlatList
-            data={data.user.tourMembers}
-            renderItem={({ item }) => {
-              return (
-                <TouchableHighlight
-                  onPress={() => {
-                    navigation.navigate("Tour", {
-                      tourId: item.id,
-                    });
-                  }}
-                >
-                  <ListItem bottomDivider>
-                    {/* <Avatar source={{ uri: item.avatar_url }} /> */}
-                    <ListItem.Content>
-                      <ListItem.Title>{item.tour.name}</ListItem.Title>
-                      {/* <ListItem.Subtitle>{item.subtitle}</ListItem.Subtitle> */}
-                    </ListItem.Content>
-                    <ListItem.Chevron />
-                  </ListItem>
-                </TouchableHighlight>
-              );
+          <TouchableTextList
+            data={data.user.tourMembers.map((item) => {
+              return {
+                id: item.id,
+                name: item.tour.name,
+              };
+            })}
+            onPress={(id, { name }) => {
+              navigation.navigate("Tour", {
+                screen: "TourHome",
+                params: {
+                  tourId: id.toString(),
+                  tourName: name,
+                },
+              });
             }}
           />
         </View>
