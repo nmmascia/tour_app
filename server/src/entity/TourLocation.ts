@@ -6,8 +6,10 @@ import {
   UpdateDateColumn,
   OneToOne,
   JoinColumn,
+  getRepository,
 } from "typeorm";
 import { Location } from "./Location";
+import { Photo } from "./Photo";
 import { Tour } from "./Tour";
 
 @Entity()
@@ -27,4 +29,14 @@ export class TourLocation {
 
   @UpdateDateColumn()
   updatedAt: Date;
+
+  async photos(): Promise<Photo[]> {
+    return await getRepository(Photo)
+      .createQueryBuilder("photo")
+      .where("photo.targetId = :id")
+      .setParameters({
+        id: this.id,
+      })
+      .getMany();
+  }
 }

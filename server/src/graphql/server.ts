@@ -4,6 +4,12 @@ import { Tour } from "../entity/Tour";
 import { User } from "../entity/User";
 
 export const typeDefs = gql`
+  type Photo {
+    id: ID!
+    name: String!
+    url: String!
+  }
+
   type Location {
     name: String!
     address: String!
@@ -12,6 +18,7 @@ export const typeDefs = gql`
   type TourLocation {
     id: ID!
     location: Location!
+    photos: [Photo]!
   }
 
   type Tour {
