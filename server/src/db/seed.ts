@@ -28,24 +28,47 @@ const main = async () => {
     tourMember.admin = true;
     await manager.save(tourMember);
 
-    const location = new Location();
+    let location = new Location();
     location.name = "John's of Bleecker Street";
     location.address = "278 Bleecker St, New York City, NY 10014-4105";
+    location = await manager.save(location);
 
     let tourLocation = new TourLocation();
     tourLocation.location = location;
     tourLocation.tour = Promise.resolve(tour);
-    await manager.save(tourLocation);
+    tourLocation = await manager.save(tourLocation);
 
     let image = readFileSync(join(__dirname, "../../test/resource/johns.jpeg"));
     let photo = new Photo();
-    photo.targetType = "TourLocation";
-    photo.targetId = tourLocation.id;
+    photo.targetType = "Location";
+    photo.targetId = location.id;
     await photo.upload({
       file: image,
-      name: "John's of Bleecker Street",
+      name: "johns.jpeg",
     });
-    await manager.save(image);
+    await manager.save(photo);
+
+    image = readFileSync(join(__dirname, "../../test/resource/pizza_one.jpeg"));
+    photo = new Photo();
+    photo.targetType = "TourLocation";
+    photo.targetId = tourLocation.id;
+    photo.description = "Our Pizza";
+    await photo.upload({
+      file: image,
+      name: "pizza_one.jpeg",
+    });
+    await manager.save(photo);
+
+    image = readFileSync(join(__dirname, "../../test/resource/pizza_two.jpeg"));
+    photo = new Photo();
+    photo.targetType = "TourLocation";
+    photo.targetId = tourLocation.id;
+    photo.description = "Our Pizza PT 2";
+    await photo.upload({
+      file: image,
+      name: "pizza_two.jpeg",
+    });
+    await manager.save(photo);
   });
 };
 
