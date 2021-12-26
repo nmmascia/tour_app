@@ -1,17 +1,31 @@
 import { gql } from "apollo-server";
+import { Tour } from "../entity/Tour";
 
 import { User } from "../entity/User";
 
 export const typeDefs = gql`
+  type Location {
+    name: String!
+    address: String!
+  }
+
+  type TourLocation {
+    id: ID!
+    location: Location!
+  }
+
   type Tour {
     id: ID!
     name: String!
+    tourMembers: [TourMember]!
+    tourLocations: [TourLocation]!
   }
 
   type TourMember {
     id: ID!
     admin: Boolean!
     tour: Tour!
+    user: User
   }
 
   type User {
@@ -23,14 +37,19 @@ export const typeDefs = gql`
 
   type Query {
     user(id: ID!): User
+    tour(id: ID!): Tour
   }
 `;
 
 export const resolvers = {
   Query: {
-    user: async (_parent, args, context, _info) => {
+    user: async (_parent, { id }, context, _info) => {
       const { connection } = context;
-      return await connection.manager.findOne(User, args);
+      return await connection.manager.findOne(User, { id });
+    },
+    tour: async (_parent, { id }, context, _info) => {
+      const { connection } = context;
+      return await connection.manager.findOne(Tour, { id });
     },
   },
 };

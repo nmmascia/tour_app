@@ -1,4 +1,11 @@
-import { Entity, PrimaryGeneratedColumn, Column, OneToMany } from "typeorm";
+import {
+  Entity,
+  PrimaryGeneratedColumn,
+  Column,
+  OneToMany,
+  CreateDateColumn,
+  UpdateDateColumn,
+} from "typeorm";
 import { TourMember } from "./TourMember";
 
 @Entity()
@@ -6,12 +13,18 @@ export class User {
   @PrimaryGeneratedColumn()
   id: number;
 
-  @Column({ nullable: false })
+  @Column({ unique: true, nullable: false })
   username: string;
 
-  @OneToMany(() => TourMember, (tourMember) => tourMember.user, { eager: true })
-  tourMembers: TourMember[];
+  @OneToMany(() => TourMember, (tourMember) => tourMember.user, { lazy: true })
+  tourMembers: Promise<TourMember[]>;
 
   @Column()
   name?: string;
+
+  @CreateDateColumn()
+  createdAt: Date;
+
+  @UpdateDateColumn()
+  updatedAt: Date;
 }

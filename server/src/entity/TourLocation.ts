@@ -2,27 +2,23 @@ import {
   Entity,
   PrimaryGeneratedColumn,
   Column,
-  OneToOne,
-  JoinColumn,
   CreateDateColumn,
   UpdateDateColumn,
+  OneToOne,
+  JoinColumn,
 } from "typeorm";
+import { Location } from "./Location";
 import { Tour } from "./Tour";
-import { User } from "./User";
 
 @Entity()
-export class TourMember {
+export class TourLocation {
   @PrimaryGeneratedColumn()
   id: number;
 
-  @Column({ default: false })
-  admin: boolean;
+  @Column({ type: "jsonb", nullable: false })
+  location: Location;
 
-  @OneToOne(() => User, (user) => user.tourMembers, { lazy: true })
-  @JoinColumn()
-  user: Promise<User>;
-
-  @OneToOne(() => Tour, (tour) => tour.tourMembers, { lazy: true })
+  @OneToOne(() => Tour, (tour) => tour.tourLocations, { lazy: true })
   @JoinColumn()
   tour: Promise<Tour>;
 
