@@ -28,12 +28,10 @@ export class Location {
   async avatar(): Promise<Photo> {
     return await getRepository(Photo)
       .createQueryBuilder("photo")
-      .where("photo.targetId = :targetId")
-      .where("photo.targetType = :targetType")
-      .setParameters({
+      .where("photo.targetId = :targetId", {
         targetId: this.id,
-        targetType: "Location",
       })
+      .andWhere("photo.targetType = :targetType", { targetType: "Location" })
       .getOne();
   }
 }
