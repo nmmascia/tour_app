@@ -29,9 +29,7 @@ const query = gql`
   }
 `;
 
-export default function TabOneScreen({
-  navigation,
-}: RootTabScreenProps<"TabOne">) {
+const ProfileScreen = ({ navigation }: RootTabScreenProps<"Home">) => {
   const { data, isLoading } = useQuery("user", async () =>
     client.request(query)
   );
@@ -54,14 +52,14 @@ export default function TabOneScreen({
           </View>
           <FlatList
             data={data.user.tourMembers}
-            renderItem={({ item, separators }) => {
+            renderItem={({ item }) => {
               return (
                 <TouchableHighlight
                   onPress={() => {
-                    navigation.navigate("TabTwo");
+                    navigation.navigate("Tour", {
+                      tourId: item.id,
+                    });
                   }}
-                  onShowUnderlay={separators.highlight}
-                  onHideUnderlay={separators.unhighlight}
                 >
                   <ListItem bottomDivider>
                     {/* <Avatar source={{ uri: item.avatar_url }} /> */}
@@ -79,7 +77,7 @@ export default function TabOneScreen({
       )}
     </View>
   );
-}
+};
 
 const styles = StyleSheet.create({
   container: {
@@ -101,3 +99,5 @@ const styles = StyleSheet.create({
     marginBottom: 20,
   },
 });
+
+export default ProfileScreen;
