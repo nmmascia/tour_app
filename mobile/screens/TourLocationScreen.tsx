@@ -3,10 +3,15 @@ import { useQuery } from "react-query";
 import { gql } from "graphql-request";
 import { TourScreenProps } from "../types";
 import client from "../api/client";
-import { ActivityIndicator, StyleSheet } from "react-native";
-import { Image } from "react-native-elements";
+import {
+  ActivityIndicator,
+  StyleSheet,
+  Dimensions,
+  Platform,
+} from "react-native";
 import { Card } from "react-native-elements";
 import { Button } from "react-native-elements";
+import Carousel, { ParallaxImage } from "react-native-snap-carousel";
 
 const query = gql`
   query TourLocation($id: ID!) {
@@ -19,6 +24,7 @@ const query = gql`
     }
   }
 `;
+const { width: screenWidth } = Dimensions.get("window");
 
 const TourLocationScreen = ({
   navigation: _navigation,
@@ -43,10 +49,29 @@ const TourLocationScreen = ({
         <ActivityIndicator size="large" />
       ) : (
         <View>
-          <Image
-            containerStyle={styles.item}
-            source={{ uri: data.tourLocation.photos[0].url }}
-            PlaceholderContent={<ActivityIndicator />}
+          <Carousel
+            sliderWidth={screenWidth}
+            sliderHeight={screenWidth}
+            itemWidth={screenWidth - 60}
+            data={data.tourLocation.photos.map((photo) => {
+              return {
+                thumbnail: photo.url,
+              };
+            })}
+            renderItem={({ item }, parallaxProps) => {
+              return (
+                <View style={styles.item}>
+                  <ParallaxImage
+                    source={{ uri: item.thumbnail }}
+                    containerStyle={styles.imageContainer}
+                    style={styles.image}
+                    parallaxFactor={0.1}
+                    {...parallaxProps}
+                  />
+                </View>
+              );
+            }}
+            hasParallaxImages={true}
           />
           <Card containerStyle={{ borderRadius: 10 }}>
             <Card.Title>Overall Rating</Card.Title>
@@ -64,10 +89,22 @@ const TourLocationScreen = ({
 const styles = StyleSheet.create({
   container: {
     flex: 1,
+    paddingTop: 10,
+    paddingBottom: 10,
   },
   item: {
-    width: "100%",
-    height: 200,
+    width: screenWidth - 60,
+    height: screenWidth - 60,
+  },
+  imageContainer: {
+    flex: 1,
+    marginBottom: Platform.select({ ios: 0, android: 1 }), // Prevent a random Android rendering issue
+    backgroundColor: "white",
+    borderRadius: 8,
+  },
+  image: {
+    ...StyleSheet.absoluteFillObject,
+    resizeMode: "cover",
   },
 });
 
