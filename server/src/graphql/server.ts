@@ -1,6 +1,7 @@
 import { gql } from "apollo-server";
 import { Location } from "../entity/Location";
 import { Tour } from "../entity/Tour";
+import { TourLocation } from "../entity/TourLocation";
 
 import { User } from "../entity/User";
 
@@ -54,6 +55,17 @@ export const typeDefs = gql`
 `;
 
 export const resolvers = {
+  Location: {
+    avatar: async (parent) => {
+      if (parent !== typeof Location) {
+        const location = new Location();
+        location.id = parent.id;
+        return location.avatar();
+      }
+
+      return parent.avatar();
+    },
+  },
   Query: {
     user: async (_parent, { id }, context, _info) => {
       const { connection } = context;
@@ -62,6 +74,10 @@ export const resolvers = {
     tour: async (_parent, { id }, context, _info) => {
       const { connection } = context;
       return await connection.manager.findOne(Tour, { id });
+    },
+    tourLocation: async (_parent, { id }, context, _info) => {
+      const { connection } = context;
+      return await connection.manager.findOne(TourLocation, { id });
     },
     location: async (_parent, { id }, context, _info) => {
       const { connection } = context;
