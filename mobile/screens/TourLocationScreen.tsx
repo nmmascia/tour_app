@@ -6,6 +6,7 @@ import client from "../api/client";
 import { ActivityIndicator, StyleSheet } from "react-native";
 import { Image } from "react-native-elements";
 import { Card } from "react-native-elements";
+import { Button } from "react-native-elements";
 
 const query = gql`
   query TourLocation($id: ID!) {
@@ -49,9 +50,10 @@ const TourLocationScreen = ({
           />
           <Card containerStyle={{ borderRadius: 10 }}>
             <Card.Title>Overall Rating</Card.Title>
-            <View style={{ alignItems: "center" }}>
+            <View style={{ alignItems: "center", marginBottom: 10 }}>
               <Text style={{ fontSize: 24, fontWeight: "bold" }}>8.1</Text>
             </View>
+            <Button title="Add Rating" />
           </Card>
         </View>
       )}
