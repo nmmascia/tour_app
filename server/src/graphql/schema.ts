@@ -1,9 +1,8 @@
-import { gql } from "apollo-server";
 import { Location } from "../entity/Location";
 import { Tour } from "../entity/Tour";
 import { TourLocation } from "../entity/TourLocation";
-
 import { User } from "../entity/User";
+import { gql } from "apollo-server";
 
 export const typeDefs = gql`
   type TourStopMember {
@@ -14,7 +13,7 @@ export const typeDefs = gql`
 
   type TourStop {
     id: ID!
-    date: DateTime!
+    date: Date!
     tourStopMembers: [TourStopMember]!
   }
 

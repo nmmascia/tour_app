@@ -1,9 +1,11 @@
-import { typeDefs, resolvers } from "./schema";
-import { ApolloServer, Config } from "apollo-server";
-import { GraphQLDatabaseLoader } from "@mando75/typeorm-graphql-loader";
 import * as GraphQLScalars from "graphql-scalars";
-import { User } from "../entity/User";
+
+import { ApolloServer, Config } from "apollo-server";
+import { resolvers, typeDefs } from "./schema";
+
 import { Connection } from "typeorm";
+import { GraphQLDatabaseLoader } from "@mando75/typeorm-graphql-loader";
+import { User } from "../entity/User";
 
 const createServer = ({ connection }: { connection: Connection }) =>
   new ApolloServer({
@@ -12,8 +14,9 @@ const createServer = ({ connection }: { connection: Connection }) =>
       ...GraphQLScalars.resolvers,
       ...resolvers,
     },
-    context: async ({ req: _req }) => {
+    context: async ({ req }) => {
       const user = await connection.manager.findOne(User, { id: 1 });
+
       return {
         user,
         loader: new GraphQLDatabaseLoader(connection),
