@@ -1,14 +1,14 @@
 import {
-  Entity,
-  PrimaryGeneratedColumn,
-  Column,
   CreateDateColumn,
-  UpdateDateColumn,
-  OneToOne,
+  Entity,
   JoinColumn,
-  getRepository,
   OneToMany,
+  OneToOne,
+  PrimaryGeneratedColumn,
+  UpdateDateColumn,
+  getRepository,
 } from "typeorm";
+
 import { Location } from "./Location";
 import { Photo } from "./Photo";
 import { Tour } from "./Tour";
@@ -45,9 +45,9 @@ export class TourLocation {
   async photos(): Promise<Photo[]> {
     return await getRepository(Photo)
       .createQueryBuilder("photo")
-      .where("photo.targetId = :id")
-      .setParameters({
-        id: this.id,
+      .where("photo.targetId = :targetId", { targetId: this.id })
+      .andWhere("photo.targetType = :targetType", {
+        targetType: "TourLocation",
       })
       .getMany();
   }
