@@ -8,10 +8,11 @@ import {
   StyleSheet,
   Dimensions,
   Platform,
+  ScrollView,
 } from "react-native";
-import { Card } from "react-native-elements";
-import { Button } from "react-native-elements";
+import { Avatar, Card, Button } from "react-native-elements";
 import Carousel, { ParallaxImage } from "react-native-snap-carousel";
+import PhotoCarousel from "../components/PhotoCarousel";
 
 const query = gql`
   query TourLocation($id: ID!) {
@@ -44,35 +45,12 @@ const TourLocationScreen = ({
   );
 
   return (
-    <View style={styles.container}>
+    <ScrollView style={styles.container}>
       {isLoading ? (
         <ActivityIndicator size="large" />
       ) : (
         <View>
-          <Carousel
-            sliderWidth={screenWidth}
-            sliderHeight={screenWidth}
-            itemWidth={screenWidth - 60}
-            data={data.tourLocation.photos.map((photo) => {
-              return {
-                thumbnail: photo.url,
-              };
-            })}
-            renderItem={({ item }, parallaxProps) => {
-              return (
-                <View style={styles.item}>
-                  <ParallaxImage
-                    source={{ uri: item.thumbnail }}
-                    containerStyle={styles.imageContainer}
-                    style={styles.image}
-                    parallaxFactor={0.1}
-                    {...parallaxProps}
-                  />
-                </View>
-              );
-            }}
-            hasParallaxImages={true}
-          />
+          <PhotoCarousel photos={data.tourLocation.photos} />
           <Card containerStyle={{ borderRadius: 10 }}>
             <Card.Title>Overall Rating</Card.Title>
             <View style={{ alignItems: "center", marginBottom: 10 }}>
@@ -82,7 +60,7 @@ const TourLocationScreen = ({
           </Card>
         </View>
       )}
-    </View>
+    </ScrollView>
   );
 };
 
