@@ -1,19 +1,22 @@
 import { ActivityIndicator, StyleSheet } from "react-native";
+import { Text, View } from "../components/Themed";
 
-import { View, Text } from "../components/Themed";
-import { RootTabScreenProps } from "../types";
-import { useQuery } from "react-query";
-import { gql } from "graphql-request";
-import client from "../api/client";
 import { Avatar } from "react-native-elements";
-
+import { RootTabScreenProps } from "../types";
 import TouchableTextList from "../components/TouchableTextList";
+import client from "../api/client";
+import { gql } from "graphql-request";
+import { useQuery } from "react-query";
 
 const query = gql`
   query User {
     user(id: 1) {
       id
       username
+      avatar {
+        id
+        url
+      }
       tourMembers {
         id
         admin
@@ -27,7 +30,7 @@ const query = gql`
 `;
 
 const ProfileScreen = ({ navigation }: RootTabScreenProps<"Home">) => {
-  const { data, isLoading } = useQuery("user", async () =>
+  const { data, isLoading } = useQuery("User", async () =>
     client.request(query)
   );
 
@@ -43,6 +46,9 @@ const ProfileScreen = ({ navigation }: RootTabScreenProps<"Home">) => {
               rounded
               icon={{ name: "user", type: "font-awesome" }}
               containerStyle={{ backgroundColor: "#6733b9" }}
+              source={{
+                uri: data.user.avatar.url,
+              }}
             />
             <Text style={styles.title}>{data.user.name}</Text>
             <Text style={styles.title}>{data.user.username}</Text>

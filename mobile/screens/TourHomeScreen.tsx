@@ -1,13 +1,12 @@
-import { StyleSheet, Image, FlatList } from "react-native";
-
+import { FlatList, Image, StyleSheet } from "react-native";
 import { Text, View } from "../components/Themed";
+
+import { ActivityIndicator } from "react-native";
+import TouchableTextList from "../components/TouchableTextList";
 import { TourScreenProps } from "../types";
+import client from "../api/client";
 import { gql } from "graphql-request";
 import { useQuery } from "react-query";
-import client from "../api/client";
-import { ActivityIndicator } from "react-native";
-
-import TouchableTextList from "../components/TouchableTextList";
 
 const query = gql`
   query Tour($id: ID!) {
@@ -49,7 +48,7 @@ const TourHomeScreen = ({ navigation, route }: TourScreenProps<"TourHome">) => {
   };
 
   const { data, isLoading } = useQuery(
-    ["tour", JSON.stringify(variables)],
+    ["Tour", JSON.stringify(variables)],
     async () => client.request(query, variables)
   );
 

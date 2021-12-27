@@ -14,7 +14,7 @@ const TourStopMembers = ({ title = "Participants", tourStopMembers }) => {
                 borderRadius={50}
                 borderColor="lightBlue.300"
                 source={{
-                  uri: tourStopMember.user.avatar,
+                  uri: tourStopMember.user.avatar.url,
                 }}
               >
                 {tourStopMember.user.username.slice(0, 2).toUpperCase()}

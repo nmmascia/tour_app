@@ -1,15 +1,7 @@
-import { ActivityIndicator, Dimensions } from "react-native";
-import {
-  Center,
-  Divider,
-  Flex,
-  Heading,
-  ScrollView,
-  VStack,
-} from "native-base";
+import { Divider, ScrollView, VStack } from "native-base";
 
+import { ActivityIndicator } from "react-native";
 import PhotoCarousel from "../components/PhotoCarousel";
-import RatingBadge from "../components/RatingBadge";
 import TourLocationRating from "../components/TourLocationRating";
 import { TourScreenProps } from "../types";
 import TourStops from "../components/TourStops";
@@ -35,13 +27,16 @@ const query = gql`
             id
             username
             name
+            avatar {
+              id
+              url
+            }
           }
         }
       }
     }
   }
 `;
-const { width: screenWidth } = Dimensions.get("window");
 
 const TourLocationScreen = ({
   navigation: _navigation,

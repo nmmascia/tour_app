@@ -4,7 +4,7 @@ import TimestampRatingBadge from "../components/TimestampRatingBadge";
 import TourStopMembers from "../components/TourStopMembers";
 
 const TourStopCard = (props) => {
-  const { date, tourStopMembers, rating = 5.3 } = props;
+  const { date, tourStopMembers, rating } = props;
 
   return (
     <Center w="100%" rounded="md" shadow={1} bg="white" p={2}>
