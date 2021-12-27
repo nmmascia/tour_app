@@ -1,22 +1,23 @@
-import { Location } from "../entity/Location";
 import "reflect-metadata";
-import { createConnection } from "typeorm";
+
+import * as Faker from "faker";
+
+import { Location } from "../entity/Location";
+import { Photo } from "../entity/Photo";
 import { Tour } from "../entity/Tour";
 import { TourLocation } from "../entity/TourLocation";
 import { TourMember } from "../entity/TourMember";
-import { User } from "../entity/User";
-import { readFileSync } from "fs";
-import { join } from "path";
-import { Photo } from "../entity/Photo";
 import { TourStop } from "../entity/TourStop";
 import { TourStopMember } from "../entity/TourStopMember";
-import * as Faker from "faker";
+import { User } from "../entity/User";
+import { createConnection } from "typeorm";
+import { join } from "path";
+import { readFileSync } from "fs";
 
 const createUser = () => {
   const user = new User();
-  user.username = Faker.internet.userName();
-  user.avatar = Faker.internet.avatar();
-  user.name = Faker.name.firstName();
+  user.username = "dwallace";
+  user.name = "David Wallace";
   return user;
 };
 
@@ -49,6 +50,18 @@ const main = async () => {
   // await connection.transaction(async (manager) => {
   let user = createUser();
   user = await manager.save(user);
+
+  let image = readFileSync(
+    join(__dirname, `../../test/resource/user_one.jpeg`)
+  );
+  let photo = new Photo();
+  photo.targetType = "User";
+  photo.targetId = user.id;
+  await photo.upload({
+    file: image,
+    name: "user_one.jpeg",
+  });
+  await manager.save(photo);
 
   tours.forEach(async (t) => {
     let tour = new Tour();

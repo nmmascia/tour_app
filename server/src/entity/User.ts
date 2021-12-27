@@ -1,11 +1,14 @@
 import {
-  Entity,
-  PrimaryGeneratedColumn,
   Column,
-  OneToMany,
   CreateDateColumn,
+  Entity,
+  OneToMany,
+  PrimaryGeneratedColumn,
   UpdateDateColumn,
+  getRepository,
 } from "typeorm";
+
+import { Photo } from "./Photo";
 import { TourMember } from "./TourMember";
 
 @Entity()
@@ -22,12 +25,19 @@ export class User {
   @Column()
   name?: string;
 
-  @Column({ nullable: true })
-  avatar?: string;
-
   @CreateDateColumn()
   createdAt: Date;
 
   @UpdateDateColumn()
   updatedAt: Date;
+
+  async avatar(): Promise<Photo> {
+    return await getRepository(Photo)
+      .createQueryBuilder("photo")
+      .where("photo.targetId = :targetId", {
+        targetId: this.id,
+      })
+      .andWhere("photo.targetType = :targetType", { targetType: "User" })
+      .getOne();
+  }
 }
