@@ -1,7 +1,5 @@
-import { View } from "../components/Themed";
-
-import { StyleSheet, Dimensions, Platform } from "react-native";
 import Carousel, { ParallaxImage } from "react-native-snap-carousel";
+import { Dimensions, Platform, StyleSheet, View } from "react-native";
 
 const { width: screenWidth } = Dimensions.get("window");
 
@@ -49,7 +47,6 @@ const styles = StyleSheet.create({
   imageContainer: {
     flex: 1,
     marginBottom: Platform.select({ ios: 0, android: 1 }), // Prevent a random Android rendering issue
-    backgroundColor: "white",
     borderRadius: 8,
   },
   image: {

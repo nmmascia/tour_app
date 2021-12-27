@@ -1,18 +1,21 @@
-import { Text, View } from "../components/Themed";
-import { useQuery } from "react-query";
-import { gql } from "graphql-request";
-import { TourScreenProps } from "../types";
-import client from "../api/client";
+import { ActivityIndicator, Dimensions } from "react-native";
 import {
-  ActivityIndicator,
-  StyleSheet,
-  Dimensions,
-  Platform,
+  Center,
+  Divider,
+  Flex,
+  Heading,
   ScrollView,
-} from "react-native";
-import { Avatar, Card, Button } from "react-native-elements";
-import Carousel, { ParallaxImage } from "react-native-snap-carousel";
+  VStack,
+} from "native-base";
+
 import PhotoCarousel from "../components/PhotoCarousel";
+import RatingBadge from "../components/RatingBadge";
+import TourLocationRating from "../components/TourLocationRating";
+import { TourScreenProps } from "../types";
+import TourStops from "../components/TourStops";
+import client from "../api/client";
+import { gql } from "graphql-request";
+import { useQuery } from "react-query";
 
 const query = gql`
   query TourLocation($id: ID!) {
@@ -21,6 +24,19 @@ const query = gql`
       photos {
         id
         url
+      }
+      tourStops {
+        id
+        date
+        tourStopMembers {
+          id
+          rating
+          user {
+            id
+            username
+            name
+          }
+        }
       }
     }
   }
@@ -45,45 +61,21 @@ const TourLocationScreen = ({
   );
 
   return (
-    <ScrollView style={styles.container}>
+    <ScrollView _contentContainerStyle={{ pt: 2 }}>
       {isLoading ? (
         <ActivityIndicator size="large" />
       ) : (
-        <View>
+        <>
           <PhotoCarousel photos={data.tourLocation.photos} />
-          <Card containerStyle={{ borderRadius: 10 }}>
-            <Card.Title>Overall Rating</Card.Title>
-            <View style={{ alignItems: "center", marginBottom: 10 }}>
-              <Text style={{ fontSize: 24, fontWeight: "bold" }}>8.1</Text>
-            </View>
-            <Button title="Add Rating" />
-          </Card>
-        </View>
+          <VStack space={4} p={4}>
+            <TourLocationRating rating={data.tourLocation.rating} />
+            <Divider />
+            <TourStops tourStops={data.tourLocation.tourStops} />
+          </VStack>
+        </>
       )}
     </ScrollView>
   );
 };
-
-const styles = StyleSheet.create({
-  container: {
-    flex: 1,
-    paddingTop: 10,
-    paddingBottom: 10,
-  },
-  item: {
-    width: screenWidth - 60,
-    height: screenWidth - 60,
-  },
-  imageContainer: {
-    flex: 1,
-    marginBottom: Platform.select({ ios: 0, android: 1 }), // Prevent a random Android rendering issue
-    backgroundColor: "white",
-    borderRadius: 8,
-  },
-  image: {
-    ...StyleSheet.absoluteFillObject,
-    resizeMode: "cover",
-  },
-});
 
 export default TourLocationScreen;

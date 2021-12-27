@@ -1,10 +1,11 @@
-import { StatusBar } from "expo-status-bar";
-import { SafeAreaProvider } from "react-native-safe-area-context";
+import { QueryClient, QueryClientProvider } from "react-query";
 
+import { NativeBaseProvider } from "native-base";
+import Navigation from "./navigation";
+import { SafeAreaProvider } from "react-native-safe-area-context";
+import { StatusBar } from "expo-status-bar";
 import useCachedResources from "./hooks/useCachedResources";
 import useColorScheme from "./hooks/useColorScheme";
-import Navigation from "./navigation";
-import { QueryClient, QueryClientProvider } from "react-query";
 
 const client = new QueryClient();
 
@@ -18,8 +19,10 @@ export default function App() {
     return (
       <SafeAreaProvider>
         <QueryClientProvider client={client}>
-          <Navigation colorScheme={colorScheme} />
-          <StatusBar />
+          <NativeBaseProvider>
+            <Navigation colorScheme={colorScheme} />
+            <StatusBar />
+          </NativeBaseProvider>
         </QueryClientProvider>
       </SafeAreaProvider>
     );
