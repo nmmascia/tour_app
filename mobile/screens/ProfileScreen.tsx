@@ -2,8 +2,9 @@ import { ActivityIndicator, StyleSheet } from "react-native";
 import { Text, View } from "../components/Themed";
 
 import { Avatar } from "react-native-elements";
+import Loader from "../components/Loader";
 import { RootTabScreenProps } from "../types";
-import TouchableTextList from "../components/TouchableTextList";
+import TourMembersList from "../components/TourMembersList";
 import client from "../api/client";
 import { gql } from "graphql-request";
 import { useQuery } from "react-query";
@@ -34,44 +35,37 @@ const ProfileScreen = ({ navigation }: RootTabScreenProps<"Home">) => {
     client.request(query)
   );
 
+  if (isLoading) {
+    return <Loader />;
+  }
+
   return (
     <View style={styles.container}>
-      {isLoading ? (
-        <ActivityIndicator size="large" />
-      ) : (
-        <View>
-          <View style={styles.header}>
-            <Avatar
-              size={64}
-              rounded
-              icon={{ name: "user", type: "font-awesome" }}
-              containerStyle={{ backgroundColor: "#6733b9" }}
-              source={{
-                uri: data.user.avatar.url,
-              }}
-            />
-            <Text style={styles.title}>{data.user.name}</Text>
-            <Text style={styles.title}>{data.user.username}</Text>
-          </View>
-          <TouchableTextList
-            data={data.user.tourMembers.map((item) => {
-              return {
-                id: item.id,
-                name: item.tour.name,
-              };
-            })}
-            onPress={(id, { name }) => {
-              navigation.navigate("Tour", {
-                screen: "TourHome",
-                params: {
-                  tourId: id.toString(),
-                  tourName: name,
-                },
-              });
-            }}
-          />
-        </View>
-      )}
+      <View style={styles.header}>
+        <Avatar
+          size={64}
+          rounded
+          icon={{ name: "user", type: "font-awesome" }}
+          containerStyle={{ backgroundColor: "#6733b9" }}
+          source={{
+            uri: data.user.avatar.url,
+          }}
+        />
+        <Text style={styles.title}>{data.user.name}</Text>
+        <Text style={styles.title}>{data.user.username}</Text>
+      </View>
+      <TourMembersList
+        tourMembers={data.user.tourMembers}
+        onTourPress={(id, { name }) => {
+          navigation.navigate("Tour", {
+            screen: "TourHome",
+            params: {
+              tourId: id.toString(),
+              tourName: name,
+            },
+          });
+        }}
+      />
     </View>
   );
 };

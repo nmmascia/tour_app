@@ -1,6 +1,7 @@
 import { Divider, ScrollView, VStack } from "native-base";
 
 import { ActivityIndicator } from "react-native";
+import Loader from "../components/Loader";
 import PhotoCarousel from "../components/PhotoCarousel";
 import TourLocationRating from "../components/TourLocationRating";
 import { TourScreenProps } from "../types";
@@ -55,20 +56,18 @@ const TourLocationScreen = ({
     async () => client.request(query, variables)
   );
 
+  if (isLoading) {
+    return <Loader />;
+  }
+
   return (
     <ScrollView _contentContainerStyle={{ pt: 2 }}>
-      {isLoading ? (
-        <ActivityIndicator size="large" />
-      ) : (
-        <>
-          <PhotoCarousel photos={data.tourLocation.photos} />
-          <VStack space={4} p={4}>
-            <TourLocationRating rating={data.tourLocation.rating} />
-            <Divider />
-            <TourStops tourStops={data.tourLocation.tourStops} />
-          </VStack>
-        </>
-      )}
+      <PhotoCarousel photos={data.tourLocation.photos} />
+      <VStack space={4} p={4}>
+        <TourLocationRating rating={data.tourLocation.rating} />
+        <Divider />
+        <TourStops tourStops={data.tourLocation.tourStops} />
+      </VStack>
     </ScrollView>
   );
 };

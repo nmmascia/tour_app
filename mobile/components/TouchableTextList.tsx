@@ -1,6 +1,7 @@
+import { Avatar, ListItem } from "react-native-elements";
 import { FlatList, TouchableHighlight } from "react-native";
 
-import { ListItem, Avatar } from "react-native-elements";
+import { Heading } from "native-base";
 
 interface Item {
   id: number;
@@ -34,7 +35,7 @@ const TouchableTextList = ({ data, onPress }: Props) => {
                 />
               )}
               <ListItem.Content>
-                <ListItem.Title>{item.name}</ListItem.Title>
+                <Heading size="sm">{item.name}</Heading>
                 {item.subtitle && (
                   <ListItem.Subtitle>{item.subtitle}</ListItem.Subtitle>
                 )}

@@ -3,11 +3,12 @@
  * https://reactnavigation.org/docs/typescript/
  */
 
-import { BottomTabScreenProps } from "@react-navigation/bottom-tabs";
 import {
   CompositeScreenProps,
   NavigatorScreenParams,
 } from "@react-navigation/native";
+
+import { BottomTabScreenProps } from "@react-navigation/bottom-tabs";
 import { NativeStackScreenProps } from "@react-navigation/native-stack";
 
 declare global {
@@ -19,6 +20,7 @@ declare global {
 export type RootStackParamList = {
   Root: NavigatorScreenParams<RootTabParamList> | undefined;
   Modal: undefined;
+  TourForm: undefined;
   NotFound: undefined;
 };
 
@@ -42,6 +44,7 @@ export type ScreenStackParamList = {
 };
 
 export type ScreenParamList = {
+  ToursHome: undefined;
   TourHome: {
     tourId: string;
     tourName: string;

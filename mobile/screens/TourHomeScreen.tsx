@@ -1,9 +1,9 @@
-import { FlatList, Image, StyleSheet } from "react-native";
-import { Text, View } from "../components/Themed";
-
 import { ActivityIndicator } from "react-native";
+import Loader from "../components/Loader";
+import { StyleSheet } from "react-native";
 import TouchableTextList from "../components/TouchableTextList";
 import { TourScreenProps } from "../types";
+import { View } from "../components/Themed";
 import client from "../api/client";
 import { gql } from "graphql-request";
 import { useQuery } from "react-query";
@@ -52,32 +52,30 @@ const TourHomeScreen = ({ navigation, route }: TourScreenProps<"TourHome">) => {
     async () => client.request(query, variables)
   );
 
+  if (isLoading) {
+    return <Loader />;
+  }
+
   return (
     <View style={styles.container}>
-      {isLoading ? (
-        <ActivityIndicator size="large" />
-      ) : (
-        <View>
-          <View style={styles.list}>
-            <TouchableTextList
-              data={data.tour.tourLocations.map((item) => {
-                return {
-                  id: item.id,
-                  name: item.location.name,
-                  subtitle: item.location.address,
-                  avatarUrl: item.location.avatar.url,
-                };
-              })}
-              onPress={(id, { name }) => {
-                navigation.navigate("TourLocation", {
-                  tourLocationId: id.toString(),
-                  tourLocationName: name,
-                });
-              }}
-            />
-          </View>
-        </View>
-      )}
+      <View style={styles.list}>
+        <TouchableTextList
+          data={data.tour.tourLocations.map((item) => {
+            return {
+              id: item.id,
+              name: item.location.name,
+              subtitle: item.location.address,
+              avatarUrl: item.location.avatar.url,
+            };
+          })}
+          onPress={(id, { name }) => {
+            navigation.navigate("TourLocation", {
+              tourLocationId: id.toString(),
+              tourLocationName: name,
+            });
+          }}
+        />
+      </View>
     </View>
   );
 };
