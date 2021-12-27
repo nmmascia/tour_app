@@ -57,6 +57,7 @@ export const typeDefs = gql`
     name: String
     tourMembers: [TourMember]!
     username: String!
+    avatar: String
   }
 
   type Query {

@@ -4,7 +4,9 @@
   "description": "Awesome project developed with TypeORM.",
   "devDependencies": {
     "@types/aws-sdk": "^2.7.0",
+    "@types/faker": "^5.5.9",
     "@types/node": "^8.0.29",
+    "faker": "^5.5.3",
     "ts-node": "3.3.0",
     "typescript": "3.3.3333"
   },

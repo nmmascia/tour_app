@@ -4,7 +4,6 @@ import { createConnection } from "typeorm";
 import { User } from "./entity/User";
 import { typeDefs, resolvers } from "./graphql/server";
 import { ApolloServer, Config } from "apollo-server";
-import storageClient from "./storage/client";
 import { GraphQLDatabaseLoader } from "@mando75/typeorm-graphql-loader";
 import * as GraphQLScalars from "graphql-scalars";
 
@@ -22,7 +21,6 @@ async function main() {
         return {
           connection,
           user: users,
-          storageClient,
           loader: new GraphQLDatabaseLoader(connection),
         };
       },

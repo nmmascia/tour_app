@@ -7,6 +7,7 @@ import {
   CreateDateColumn,
   UpdateDateColumn,
   Column,
+  ManyToOne,
 } from "typeorm";
 import { TourStop } from "./TourStop";
 import { User } from "./User";
@@ -16,7 +17,7 @@ export class TourStopMember {
   @PrimaryGeneratedColumn()
   id: number;
 
-  @OneToOne(() => User, (user) => user.id, { eager: true })
+  @ManyToOne(() => User, (user) => user.id, { eager: true })
   @JoinColumn()
   user: User;
 

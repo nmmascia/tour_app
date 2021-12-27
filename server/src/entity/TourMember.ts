@@ -6,6 +6,7 @@ import {
   JoinColumn,
   CreateDateColumn,
   UpdateDateColumn,
+  ManyToOne,
 } from "typeorm";
 import { Tour } from "./Tour";
 import { User } from "./User";
@@ -18,7 +19,7 @@ export class TourMember {
   @Column({ default: false })
   admin: boolean;
 
-  @OneToOne(() => User, (user) => user.tourMembers, { lazy: true })
+  @ManyToOne(() => User, (user) => user.tourMembers, { lazy: true })
   @JoinColumn()
   user: Promise<User>;
 
