@@ -6,6 +6,18 @@ import { TourLocation } from "../entity/TourLocation";
 import { User } from "../entity/User";
 
 export const typeDefs = gql`
+  type TourStopMember {
+    id: ID!
+    user: User!
+    rating: Float
+  }
+
+  type TourStop {
+    id: ID!
+    date: DateTime!
+    tourStopMembers: [TourStopMember]!
+  }
+
   type Photo {
     id: ID!
     name: String!
@@ -23,6 +35,7 @@ export const typeDefs = gql`
     id: ID!
     location: Location!
     photos: [Photo]!
+    tourStops: [TourStop]!
   }
 
   type Tour {
@@ -54,34 +67,25 @@ export const typeDefs = gql`
   }
 `;
 
-export const resolvers = {
-  Location: {
-    avatar: async (parent) => {
-      if (parent !== typeof Location) {
-        const location = new Location();
-        location.id = parent.id;
-        return location.avatar();
-      }
+/*
+  Load all relationship based on GQL info.
+*/
+const createEntityResolver =
+  (type) =>
+  async (_parent, { id }, context, info) => {
+    const { loader } = context;
+    return await loader
+      .loadEntity(type, "entity")
+      .where("entity.id = :id", { id })
+      .info(info)
+      .loadOne();
+  };
 
-      return parent.avatar();
-    },
-  },
+export const resolvers = {
   Query: {
-    user: async (_parent, { id }, context, _info) => {
-      const { connection } = context;
-      return await connection.manager.findOne(User, { id });
-    },
-    tour: async (_parent, { id }, context, _info) => {
-      const { connection } = context;
-      return await connection.manager.findOne(Tour, { id });
-    },
-    tourLocation: async (_parent, { id }, context, _info) => {
-      const { connection } = context;
-      return await connection.manager.findOne(TourLocation, { id });
-    },
-    location: async (_parent, { id }, context, _info) => {
-      const { connection } = context;
-      return await connection.manager.findOne(Location, { id });
-    },
+    user: createEntityResolver(User),
+    tour: createEntityResolver(Tour),
+    tourLocation: createEntityResolver(TourLocation),
+    location: createEntityResolver(Location),
   },
 };

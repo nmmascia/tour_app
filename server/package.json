@@ -9,10 +9,12 @@
     "typescript": "3.3.3333"
   },
   "dependencies": {
+    "@mando75/typeorm-graphql-loader": "^1.7.4",
     "apollo-server": "^3.5.0",
     "aws-sdk": "^2.1048.0",
     "dotenv": "^10.0.0",
     "graphql": "^15.8.0",
+    "graphql-scalars": "^1.14.1",
     "pg": "^8.4.0",
     "reflect-metadata": "^0.1.10",
     "typeorm": "0.2.41"

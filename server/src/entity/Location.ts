@@ -5,8 +5,11 @@ import {
   getRepository,
   CreateDateColumn,
   UpdateDateColumn,
+  OneToMany,
+  OneToOne,
 } from "typeorm";
 import { Photo } from "./Photo";
+import { TourLocation } from "./TourLocation";
 
 @Entity()
 export class Location {
@@ -18,6 +21,9 @@ export class Location {
 
   @Column({ nullable: false })
   address: string;
+
+  @OneToOne(() => TourLocation, (tourLocation) => tourLocation.location)
+  tourLocation: TourLocation;
 
   @CreateDateColumn()
   createdAt: Date;

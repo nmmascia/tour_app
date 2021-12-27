@@ -8,6 +8,8 @@ import { User } from "../entity/User";
 import { readFileSync } from "fs";
 import { join } from "path";
 import { Photo } from "../entity/Photo";
+import { TourStop } from "../entity/TourStop";
+import { TourStopMember } from "../entity/TourStopMember";
 
 const main = async () => {
   const connection = await createConnection();
@@ -69,6 +71,15 @@ const main = async () => {
       name: "pizza_two.jpeg",
     });
     await manager.save(photo);
+
+    let tourStopMember = new TourStopMember();
+    tourStopMember.user = user;
+
+    let tourStop = new TourStop();
+    tourStop.date = new Date();
+    tourStop.tourStopMembers = Promise.resolve([tourStopMember]);
+    tourStop.tourLocation = tourLocation;
+    await manager.save(tourStop);
   });
 };
 
