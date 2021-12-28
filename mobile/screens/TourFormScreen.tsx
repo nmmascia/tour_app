@@ -11,26 +11,21 @@ import {
   VStack,
 } from "native-base";
 
-import AutocompleteInput from "../components/AutocompleteInput";
 import FormSubmitButton from "../components/FormSubmitButton";
 import IconButton from "../components/IconButton";
+import UsersAutocompleteInput from "../components/UsersAutocompleteInput";
 import { useState } from "react";
-
-const MOCK_USERS = [
-  {
-    id: 1,
-    name: "Michael Scott",
-    username: "little_kid_lover",
-    avatar: {
-      url: "https://upload.wikimedia.org/wikipedia/en/d/dc/MichaelScott.png",
-    },
-  },
-];
 
 interface FormState {
   name: string;
   tourMembers: Array<{
     id: number;
+    avatar?: {
+      id: number;
+      url: string;
+    };
+    name?: string;
+    username: string;
     admin: boolean;
   }>;
 }
@@ -72,71 +67,71 @@ const TourFormScreen = () => {
           Participants
         </Heading>
         <Divider my={2} />
-        <AutocompleteInput
-          renderItem={({ item }) => {
-            const selected =
-              tourMembers.findIndex(({ id }) => id === item.id) >= 0;
-            return (
-              <Flex
-                flex={1}
-                key={item.id}
-                direction="row"
-                justifyContent="space-between"
-                alignItems="center"
-                opacity={selected ? 0.5 : 1}
-              >
-                <Flex direction="row" alignItems="center" mr="auto">
-                  <Avatar source={{ uri: item.avatar.url }} size="xs" />
-                  <VStack ml={2} mr="auto">
-                    <Heading size="xs">{item.username}</Heading>
-                    <Text>{item.name}</Text>
-                  </VStack>
-                </Flex>
-                <IconButton
-                  disabled={selected}
-                  name={selected ? "check-circle" : "plus-circle"}
-                  onPress={() => {
-                    setFormState((state) => ({
-                      ...state,
-                      tourMembers: [
-                        ...state.tourMembers,
-                        { ...item, admin: false },
-                      ],
-                    }));
-                  }}
-                />
-              </Flex>
-            );
+        <UsersAutocompleteInput
+          users={tourMembers}
+          onUserPress={(item) => {
+            setFormState((state) => ({
+              ...state,
+              tourMembers: [...state.tourMembers, { ...item, admin: false }],
+            }));
           }}
-          data={MOCK_USERS}
         />
         <VStack>
-          {tourMembers.map((item) => {
+          {tourMembers.map((item, index) => {
+            const { id, name, username, avatar, admin } = item;
+
             return (
               <Flex
                 width="100%"
-                key={item.id}
+                key={id}
                 direction="row"
                 alignItems="center"
                 mr="auto"
               >
-                <Avatar source={{ uri: item.avatar.url }} size="xs" />
+                <Avatar source={{ uri: avatar?.url }} size="xs">
+                  {username.slice(0, 2).toUpperCase()}
+                </Avatar>
                 <VStack ml={2} mr="auto">
-                  <Heading size="xs">{item.username}</Heading>
-                  <Text>{item.name}</Text>
+                  <Heading size="xs">{username}</Heading>
+                  <Text>{name}</Text>
                 </VStack>
-                <Switch size="sm" isChecked={item.admin} />
+                <Switch
+                  size="sm"
+                  isChecked={admin}
+                  onToggle={() => {
+                    setFormState((state) => {
+                      const { tourMembers } = state;
+                      const nextTourMembers = [...tourMembers];
+                      nextTourMembers[index] = {
+                        ...nextTourMembers[index],
+                        admin: !admin,
+                      };
+                      return {
+                        ...state,
+                        tourMembers: nextTourMembers,
+                      };
+                    });
+                  }}
+                />
+                <IconButton
+                  name="times-circle"
+                  size="sm"
+                  onPress={() => {
+                    setFormState((state) => {
+                      const { tourMembers } = state;
+                      const nextTourMembers = [...tourMembers];
+                      nextTourMembers.splice(index, 1);
+                      return {
+                        ...state,
+                        tourMembers: nextTourMembers,
+                      };
+                    });
+                  }}
+                />
               </Flex>
             );
           })}
         </VStack>
-      </VStack>
-
-      <VStack rounded="md" shadow={1} bg="white" p={2} m={2}>
-        <Heading alignSelf="center" size="sm">
-          Locations
-        </Heading>
-        <Divider my={2} />
       </VStack>
       <FormSubmitButton onPress={console.log} />
     </VStack>

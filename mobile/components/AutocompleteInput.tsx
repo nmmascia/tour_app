@@ -1,27 +1,62 @@
 import {
+  Center,
   FlatList,
   Flex,
   FormControl,
   Icon,
   Input,
   Stack,
+  Text,
   VStack,
 } from "native-base";
 
+import { ActivityIndicator } from "react-native";
 import { Ionicons } from "@expo/vector-icons";
-import { useState } from "react";
 
 interface AutocompleteInputProps {
   autoFocus?: boolean;
-  data: any;
+  data?: any[];
   label?: string;
   renderItem: ({ item }: any) => React.ReactElement;
+  onChangeText: (text: string) => void;
+  value: string;
+  onBlur?: () => void;
+  isLoading?: boolean;
+  onEndReached?: () => void;
+  placeholder?: string;
+  emptyMessage?: string;
 }
 
 const AutocompleteInput = (props: AutocompleteInputProps) => {
-  const { label, data, renderItem, autoFocus = false } = props;
+  const {
+    label,
+    data,
+    renderItem,
+    autoFocus = false,
+    value,
+    onChangeText,
+    onBlur,
+    isLoading,
+    onEndReached,
+    placeholder,
+    emptyMessage = "Your search did not return any results!",
+  } = props;
 
-  const [inputValue, setInputValue] = useState("");
+  let innerComponent = (
+    <FlatList data={data} renderItem={renderItem} onEndReached={onEndReached} />
+  );
+
+  if (value && !data?.length) {
+    innerComponent = (
+      <Center>
+        <Text>{emptyMessage}</Text>
+      </Center>
+    );
+  }
+
+  if (isLoading) {
+    innerComponent = <ActivityIndicator size="small" />;
+  }
 
   return (
     <VStack p={2}>
@@ -29,14 +64,10 @@ const AutocompleteInput = (props: AutocompleteInputProps) => {
         <Stack>
           {label && <FormControl.Label>{label}</FormControl.Label>}
           <Input
-            value={inputValue}
+            value={value}
             autoCapitalize="none"
-            onChangeText={(text) => {
-              setInputValue(text);
-            }}
-            onBlur={() => {
-              setInputValue("");
-            }}
+            onChangeText={onChangeText}
+            onBlur={onBlur}
             InputLeftElement={
               <Icon
                 ml="2"
@@ -46,13 +77,12 @@ const AutocompleteInput = (props: AutocompleteInputProps) => {
               />
             }
             autoFocus={autoFocus}
+            placeholder={placeholder}
           />
         </Stack>
       </FormControl>
-      <Flex m={2}>
-        {inputValue ? (
-          <FlatList data={data} renderItem={renderItem} />
-        ) : undefined}
+      <Flex m={2} mb={0}>
+        {innerComponent}
       </Flex>
     </VStack>
   );

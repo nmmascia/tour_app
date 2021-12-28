@@ -6,10 +6,11 @@ interface IconButtonProps {
   disabled?: boolean;
   name: string;
   onPress: () => void;
+  size?: "sm" | "md" | "lg";
 }
 
 const IconButton = (props: IconButtonProps) => {
-  const { disabled = false, name, onPress } = props;
+  const { disabled = false, name, onPress, size = "sm" } = props;
 
   return (
     <Pressable
@@ -19,7 +20,7 @@ const IconButton = (props: IconButtonProps) => {
         opacity: pressed ? 0.5 : 1,
       })}
     >
-      <Icon as={FontAwesome} name={name} size="sm" color="lightBlue.500" />
+      <Icon as={FontAwesome} name={name} size={size} color="lightBlue.500" />
     </Pressable>
   );
 };
