@@ -35,7 +35,7 @@ const TouchableTextList = ({ data, onPress }: Props) => {
                 />
               )}
               <ListItem.Content>
-                <Heading size="sm">{item.name}</Heading>
+                <Heading size="md">{item.name}</Heading>
                 {item.subtitle && (
                   <ListItem.Subtitle>{item.subtitle}</ListItem.Subtitle>
                 )}

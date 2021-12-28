@@ -48,7 +48,7 @@ const ProfileScreen = ({ navigation }: RootTabScreenProps<"Home">) => {
           icon={{ name: "user", type: "font-awesome" }}
           containerStyle={{ backgroundColor: "#6733b9" }}
           source={{
-            uri: data.user.avatar.url,
+            uri: data?.user?.avatar?.url,
           }}
         />
         <Text style={styles.title}>{data.user.name}</Text>

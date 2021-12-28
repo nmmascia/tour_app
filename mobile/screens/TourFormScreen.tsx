@@ -90,7 +90,7 @@ const TourFormScreen = ({ navigation }: TourScreenProps<"TourFormScreen">) => {
   return (
     <VStack flex={1} justifyContent="space-between">
       <VStack rounded="md" shadow={1} bg="white" p={2} m={2}>
-        <Heading alignSelf="center" size="sm">
+        <Heading alignSelf="center" size="md">
           Tour
         </Heading>
         <Divider my={2} />
@@ -113,7 +113,7 @@ const TourFormScreen = ({ navigation }: TourScreenProps<"TourFormScreen">) => {
         </FormControl>
       </VStack>
       <VStack rounded="md" shadow={1} bg="white" p={2} m={2}>
-        <Heading alignSelf="center" size="sm">
+        <Heading alignSelf="center" size="md">
           Participants
         </Heading>
         <Divider my={2} />
@@ -148,7 +148,7 @@ const TourFormScreen = ({ navigation }: TourScreenProps<"TourFormScreen">) => {
                 </VStack>
                 <Switch
                   isDisabled={isLoading}
-                  size="sm"
+                  size="md"
                   isChecked={admin}
                   onToggle={() => {
                     setFormState((state) => {
@@ -168,7 +168,8 @@ const TourFormScreen = ({ navigation }: TourScreenProps<"TourFormScreen">) => {
                 <IconButton
                   disabled={isLoading}
                   name="times-circle"
-                  size="sm"
+                  size="md"
+                  color="red.500"
                   onPress={() => {
                     setFormState((state) => {
                       const { tourMembers } = state;

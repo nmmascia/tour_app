@@ -1,4 +1,5 @@
 import { FontAwesome } from "@expo/vector-icons";
+import IconButton from "../components/IconButton";
 import { Pressable } from "react-native";
 import TourFormScreen from "./TourFormScreen";
 import TourHomeScreen from "./TourHomeScreen";
@@ -18,19 +19,10 @@ const TourScreen = () => {
           return {
             headerRight: () => {
               return (
-                <Pressable
+                <IconButton
                   onPress={() => navigation.navigate("TourForm")}
-                  style={({ pressed }) => ({
-                    opacity: pressed ? 0.5 : 1,
-                  })}
-                >
-                  <FontAwesome
-                    name="plus-circle"
-                    size={25}
-                    // color={Colors[colorScheme].text}
-                    style={{ marginRight: 15 }}
-                  />
-                </Pressable>
+                  name="plus-circle"
+                />
               );
             },
           };
@@ -39,28 +31,23 @@ const TourScreen = () => {
       <TourStack.Screen
         name="TourHome"
         component={TourHomeScreen}
-        options={({ navigation, route }) => {
+        options={({ route }) => {
           const {
-            params: { tourName },
+            params: { tourId, tourName },
           } = route;
 
           return {
             title: tourName,
             headerRight: () => {
               return (
-                <Pressable
-                  onPress={() => navigation.navigate("Modal")}
-                  style={({ pressed }) => ({
-                    opacity: pressed ? 0.5 : 1,
-                  })}
-                >
-                  <FontAwesome
-                    name="plus-circle"
-                    size={25}
-                    // color={Colors[colorScheme].text}
-                    style={{ marginRight: 15 }}
+                <>
+                  <IconButton
+                    onPress={console.log}
+                    name="times-circle"
+                    color="red.500"
                   />
-                </Pressable>
+                  <IconButton onPress={console.log} name="plus-circle" />
+                </>
               );
             },
           };
@@ -69,7 +56,7 @@ const TourScreen = () => {
       <TourStack.Screen
         name="TourLocation"
         component={TourLocationScreen}
-        options={({ navigation, route }) => {
+        options={({ route }) => {
           const {
             params: { tourLocationName },
           } = route;
@@ -77,21 +64,7 @@ const TourScreen = () => {
           return {
             title: tourLocationName,
             headerRight: () => {
-              return (
-                <Pressable
-                  onPress={() => navigation.navigate("Modal")}
-                  style={({ pressed }) => ({
-                    opacity: pressed ? 0.5 : 1,
-                  })}
-                >
-                  <FontAwesome
-                    name="plus-circle"
-                    size={25}
-                    // color={Colors[colorScheme].text}
-                    style={{ marginRight: 15 }}
-                  />
-                </Pressable>
-              );
+              return <IconButton onPress={console.log} name="plus-circle" />;
             },
           };
         }}

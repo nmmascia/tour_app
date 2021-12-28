@@ -5,7 +5,7 @@ const TourStopMembers = ({ title = "Participants", tourStopMembers }) => {
     <Center pt={2} pb={1}>
       <Heading size="xs">{title}</Heading>
       <Center p={1}>
-        <Avatar.Group size="sm">
+        <Avatar.Group size="md">
           {tourStopMembers.map((tourStopMember) => {
             return (
               <Avatar
