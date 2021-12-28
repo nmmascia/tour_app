@@ -1,5 +1,6 @@
 import {
   CreateDateColumn,
+  DeleteDateColumn,
   Entity,
   JoinColumn,
   OneToMany,
@@ -25,7 +26,10 @@ export class TourLocation {
   @JoinColumn()
   location: Location;
 
-  @OneToOne(() => Tour, (tour) => tour.tourLocations, { lazy: true })
+  @OneToOne(() => Tour, (tour) => tour.tourLocations, {
+    lazy: true,
+    onDelete: "CASCADE",
+  })
   @JoinColumn()
   tour: Promise<Tour>;
 
@@ -41,6 +45,9 @@ export class TourLocation {
 
   @UpdateDateColumn()
   updatedAt: Date;
+
+  @DeleteDateColumn()
+  deletedAt: Date;
 
   async photos(): Promise<Photo[]> {
     return await getRepository(Photo)

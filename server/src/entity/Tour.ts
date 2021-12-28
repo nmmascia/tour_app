@@ -1,11 +1,13 @@
 import {
-  Entity,
-  PrimaryGeneratedColumn,
   Column,
-  OneToMany,
   CreateDateColumn,
+  DeleteDateColumn,
+  Entity,
+  OneToMany,
+  PrimaryGeneratedColumn,
   UpdateDateColumn,
 } from "typeorm";
+
 import { TourLocation } from "./TourLocation";
 import { TourMember } from "./TourMember";
 
@@ -19,14 +21,12 @@ export class Tour {
 
   @OneToMany(() => TourMember, (tourMember) => tourMember.tour, {
     cascade: true,
-    onDelete: "CASCADE",
     lazy: true,
   })
   tourMembers: Promise<TourMember[]>;
 
   @OneToMany(() => TourLocation, (tourLocation) => tourLocation.tour, {
     cascade: true,
-    onDelete: "CASCADE",
     lazy: true,
   })
   tourLocations: Promise<TourLocation[]>;
@@ -36,4 +36,7 @@ export class Tour {
 
   @UpdateDateColumn()
   updatedAt: Date;
+
+  @DeleteDateColumn()
+  deletedAt: Date;
 }

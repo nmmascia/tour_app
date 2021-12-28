@@ -1,13 +1,15 @@
 import {
-  Entity,
-  PrimaryGeneratedColumn,
   Column,
-  OneToOne,
-  JoinColumn,
   CreateDateColumn,
-  UpdateDateColumn,
+  DeleteDateColumn,
+  Entity,
+  JoinColumn,
   ManyToOne,
+  OneToOne,
+  PrimaryGeneratedColumn,
+  UpdateDateColumn,
 } from "typeorm";
+
 import { Tour } from "./Tour";
 import { User } from "./User";
 
@@ -23,7 +25,13 @@ export class TourMember {
   @JoinColumn()
   user: Promise<User>;
 
-  @OneToOne(() => Tour, (tour) => tour.tourMembers, { lazy: true })
+  @Column()
+  userId: number;
+
+  @OneToOne(() => Tour, (tour) => tour.tourMembers, {
+    lazy: true,
+    onDelete: "CASCADE",
+  })
   @JoinColumn()
   tour: Promise<Tour>;
 
@@ -32,4 +40,7 @@ export class TourMember {
 
   @UpdateDateColumn()
   updatedAt: Date;
+
+  @DeleteDateColumn()
+  deletedAt: Date;
 }

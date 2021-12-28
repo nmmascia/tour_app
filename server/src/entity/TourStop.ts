@@ -1,13 +1,14 @@
 import {
-  Entity,
-  PrimaryGeneratedColumn,
-  CreateDateColumn,
-  UpdateDateColumn,
-  OneToOne,
-  JoinColumn,
   Column,
+  CreateDateColumn,
+  Entity,
+  JoinColumn,
   OneToMany,
+  OneToOne,
+  PrimaryGeneratedColumn,
+  UpdateDateColumn,
 } from "typeorm";
+
 import { TourLocation } from "./TourLocation";
 import { TourStopMember } from "./TourStopMember";
 
@@ -16,7 +17,9 @@ export class TourStop {
   @PrimaryGeneratedColumn()
   id: number;
 
-  @OneToOne(() => TourLocation, (tourLocation) => tourLocation.tourStops)
+  @OneToOne(() => TourLocation, (tourLocation) => tourLocation.tourStops, {
+    onDelete: "CASCADE",
+  })
   @JoinColumn()
   tourLocation: TourLocation;
 

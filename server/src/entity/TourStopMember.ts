@@ -1,14 +1,16 @@
-import { Float } from "aws-sdk/clients/batch";
 import {
-  Entity,
-  PrimaryGeneratedColumn,
-  OneToOne,
-  JoinColumn,
-  CreateDateColumn,
-  UpdateDateColumn,
   Column,
+  CreateDateColumn,
+  DeleteDateColumn,
+  Entity,
+  JoinColumn,
   ManyToOne,
+  OneToOne,
+  PrimaryGeneratedColumn,
+  UpdateDateColumn,
 } from "typeorm";
+
+import { Float } from "aws-sdk/clients/batch";
 import { TourStop } from "./TourStop";
 import { User } from "./User";
 
@@ -21,7 +23,9 @@ export class TourStopMember {
   @JoinColumn()
   user: User;
 
-  @OneToOne(() => TourStop, (tourStop) => tourStop.tourStopMembers)
+  @OneToOne(() => TourStop, (tourStop) => tourStop.tourStopMembers, {
+    onDelete: "CASCADE",
+  })
   @JoinColumn()
   tourStop: TourStop;
 
@@ -33,4 +37,7 @@ export class TourStopMember {
 
   @UpdateDateColumn()
   updatedAt: Date;
+
+  @DeleteDateColumn()
+  deletedAt: Date;
 }

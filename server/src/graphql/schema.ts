@@ -114,8 +114,13 @@ export const typeDefs = gql`
     tour: Tour
   }
 
+  type DeleteTourPayload {
+    success: Boolean!
+  }
+
   type Mutation {
     createTour(input: CreateTourInput!): CreateTourPayload!
+    deleteTour(id: ID!): DeleteTourPayload!
   }
 `;
 
@@ -217,6 +222,36 @@ export const resolvers = {
       });
 
       return result;
+    },
+    deleteTour: async (_parent, args, context) => {
+      try {
+        const { user, connection } = context;
+        const tour = await connection.manager.findOne(Tour, args);
+        const tourMembers = await tour.tourMembers;
+        const isAdmin = tourMembers.some(
+          (tm) => tm.userId === user.id && tm.admin
+        );
+        if (!isAdmin) {
+          return {
+            success: false,
+          };
+        }
+
+        /*
+          Todo(Nick)
+          Soft delete does not cascade for relations currently
+
+          https://github.com/typeorm/typeorm/issues/5877
+        */
+        await connection.manager.delete(Tour, tour.id);
+        return {
+          success: true,
+        };
+      } catch (error) {
+        return {
+          success: false,
+        };
+      }
     },
   },
 };
