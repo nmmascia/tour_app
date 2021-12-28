@@ -1,10 +1,10 @@
-import { ActivityIndicator, StyleSheet } from "react-native";
-import { Text, View } from "../components/Themed";
+import { Avatar, Heading, Text, VStack } from "native-base";
 
-import { Avatar } from "react-native-elements";
 import Loader from "../components/Loader";
 import { RootTabScreenProps } from "../types";
+import { StyleSheet } from "react-native";
 import TourMembersList from "../components/TourMembersList";
+import { View } from "../components/Themed";
 import client from "../api/client";
 import { gql } from "graphql-request";
 import { useQuery } from "react-query";
@@ -13,6 +13,7 @@ const query = gql`
   query CurrentUser {
     currentUser {
       id
+      name
       username
       avatar {
         id
@@ -39,23 +40,28 @@ const ProfileScreen = ({ navigation }: RootTabScreenProps<"Home">) => {
     return <Loader />;
   }
 
+  const {
+    currentUser: { avatar, name, username, tourMembers },
+  } = data;
+
   return (
     <View style={styles.container}>
       <View style={styles.header}>
         <Avatar
-          size={64}
-          rounded
-          icon={{ name: "user", type: "font-awesome" }}
-          containerStyle={{ backgroundColor: "#6733b9" }}
+          size="xl"
           source={{
-            uri: data?.user?.avatar?.url,
+            uri: avatar?.url,
           }}
-        />
-        <Text style={styles.title}>{data.user.name}</Text>
-        <Text style={styles.title}>{data.user.username}</Text>
+        >
+          {username.slice(0, 2)}
+        </Avatar>
+        <VStack alignItems="center" mt={1}>
+          <Heading size="md">{username}</Heading>
+          <Text>{name}</Text>
+        </VStack>
       </View>
       <TourMembersList
-        tourMembers={data.user.tourMembers}
+        tourMembers={tourMembers}
         onTourPress={(id, { name }) => {
           navigation.navigate("Tour", {
             screen: "TourHome",
