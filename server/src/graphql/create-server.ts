@@ -18,6 +18,7 @@ const createServer = ({ connection }: { connection: Connection }) =>
       const user = await connection.manager.findOne(User, { id: 1 });
 
       return {
+        connection,
         user,
         loader: new GraphQLDatabaseLoader(connection),
       };

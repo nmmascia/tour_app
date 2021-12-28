@@ -14,6 +14,9 @@ import {
 import FormSubmitButton from "../components/FormSubmitButton";
 import IconButton from "../components/IconButton";
 import UsersAutocompleteInput from "../components/UsersAutocompleteInput";
+import client from "../api/client";
+import { gql } from "graphql-request";
+import { useMutation } from "react-query";
 import { useState } from "react";
 
 interface FormState {
@@ -30,11 +33,64 @@ interface FormState {
   }>;
 }
 
-const TourFormScreen = () => {
+interface MutationPayload {
+  createTour: {
+    success: boolean;
+    tour?: {
+      id: number;
+      name: string;
+    };
+  };
+}
+
+const mutation = gql`
+  mutation CreateTour($input: CreateTourInput!) {
+    createTour(input: $input) {
+      success
+      tour {
+        id
+        name
+      }
+    }
+  }
+`;
+
+const TourFormScreen = ({ navigation }) => {
   const [formState, setFormState] = useState<FormState>({
     name: "",
     tourMembers: [],
   });
+
+  const { mutate, isLoading } = useMutation(
+    async (formState: FormState): Promise<MutationPayload> => {
+      return client.request(mutation, { input: formState });
+    },
+    {
+      onSuccess: (data) => {
+        const { createTour } = data;
+        const { success } = createTour;
+
+        if (success) {
+          const { tour } = createTour;
+          if (tour) {
+            const { id, name } = tour;
+            /*
+              Todo(Nick)
+              How do we reset the previous navigation
+              stack when we navigate to the Tour page?
+            */
+            navigation.navigate("Tour", {
+              screen: "TourHome",
+              params: {
+                tourId: id.toString(),
+                tourName: name,
+              },
+            });
+          }
+        }
+      },
+    }
+  );
 
   const { name, tourMembers } = formState;
 
@@ -49,6 +105,7 @@ const TourFormScreen = () => {
           <Stack>
             <FormControl.Label>Name</FormControl.Label>
             <Input
+              isDisabled={isLoading}
               value={name}
               placeholder="Taco Tour"
               autoFocus
@@ -68,6 +125,7 @@ const TourFormScreen = () => {
         </Heading>
         <Divider my={2} />
         <UsersAutocompleteInput
+          isDisabled={isLoading}
           users={tourMembers}
           onUserPress={(item) => {
             setFormState((state) => ({
@@ -96,6 +154,7 @@ const TourFormScreen = () => {
                   <Text>{name}</Text>
                 </VStack>
                 <Switch
+                  isDisabled={isLoading}
                   size="sm"
                   isChecked={admin}
                   onToggle={() => {
@@ -114,6 +173,7 @@ const TourFormScreen = () => {
                   }}
                 />
                 <IconButton
+                  disabled={isLoading}
                   name="times-circle"
                   size="sm"
                   onPress={() => {
@@ -133,7 +193,12 @@ const TourFormScreen = () => {
           })}
         </VStack>
       </VStack>
-      <FormSubmitButton onPress={console.log} />
+      <FormSubmitButton
+        isLoading={isLoading}
+        onPress={() => {
+          mutate(formState);
+        }}
+      />
     </VStack>
   );
 };

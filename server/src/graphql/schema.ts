@@ -1,6 +1,7 @@
 import { Location } from "../entity/Location";
 import { Tour } from "../entity/Tour";
 import { TourLocation } from "../entity/TourLocation";
+import { TourMember } from "../entity/TourMember";
 import { User } from "../entity/User";
 import { gql } from "apollo-server";
 
@@ -91,6 +92,31 @@ export const typeDefs = gql`
       offset: Int
     ): LocationPagination
   }
+
+  "The createTour mutation input to create TourMembers on the Tour."
+  input CreateTourTourMemberInput {
+    "The user id used as the foreign key on the new TourMember model."
+    id: ID!
+    "Gives the TourMember elevated privileges for the Tour model."
+    admin: Boolean
+  }
+
+  "The createTour mutation input in order to create a new Tour model."
+  input CreateTourInput {
+    "The name of the new Tour."
+    name: String!
+    "The list of users added to the Tour as new TourMembers models."
+    tourMembers: [CreateTourTourMemberInput]!
+  }
+
+  type CreateTourPayload {
+    success: Boolean!
+    tour: Tour
+  }
+
+  type Mutation {
+    createTour(input: CreateTourInput!): CreateTourPayload!
+  }
 `;
 
 /*
@@ -148,5 +174,49 @@ export const resolvers = {
     location: createEntityResolver(Location),
     paginatedUsers: createOffsetEntityResolver(User),
     paginatedLocations: createOffsetEntityResolver(Location),
+  },
+  Mutation: {
+    createTour: async (_parent, args, context) => {
+      const {
+        input: { name, tourMembers },
+      } = args;
+      const { user, connection } = context;
+
+      const result = await connection.transaction(async (manager) => {
+        try {
+          let tour = new Tour();
+          tour.name = name;
+
+          const tourMemberModels = tourMembers.map((tourMember) => {
+            const tourMemberModel = new TourMember();
+            tourMemberModel.user = tourMember.id;
+            tourMemberModel.admin = tourMember.admin;
+            return tourMember;
+          });
+
+          const userTourMember = new TourMember();
+          userTourMember.user = user;
+          userTourMember.admin = true;
+
+          tourMemberModels.push(userTourMember);
+
+          tour.tourMembers = tourMemberModels;
+
+          tour = await manager.save(tour);
+
+          return {
+            success: true,
+            tour,
+          };
+        } catch (error) {
+          return {
+            success: false,
+            tour: null,
+          };
+        }
+      });
+
+      return result;
+    },
   },
 };

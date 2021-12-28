@@ -25,6 +25,7 @@ interface AutocompleteInputProps {
   onEndReached?: () => void;
   placeholder?: string;
   emptyMessage?: string;
+  isDisabled?: boolean;
 }
 
 const AutocompleteInput = (props: AutocompleteInputProps) => {
@@ -40,6 +41,7 @@ const AutocompleteInput = (props: AutocompleteInputProps) => {
     onEndReached,
     placeholder,
     emptyMessage = "Your search did not return any results!",
+    isDisabled,
   } = props;
 
   let innerComponent = (
@@ -78,6 +80,7 @@ const AutocompleteInput = (props: AutocompleteInputProps) => {
             }
             autoFocus={autoFocus}
             placeholder={placeholder}
+            isDisabled={isDisabled}
           />
         </Stack>
       </FormControl>

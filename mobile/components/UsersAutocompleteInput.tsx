@@ -23,6 +23,7 @@ interface UsersAutocompleteInputProps {
     id: number;
   }>;
   onUserPress: (item: Item) => void;
+  isDisabled?: boolean;
 }
 
 const query = gql`
@@ -48,6 +49,7 @@ const DEFAULT_DATA: Item[] = [];
 const UsersAutocompleteInput = ({
   users,
   onUserPress,
+  isDisabled,
 }: UsersAutocompleteInputProps) => {
   const [offset, setOffset] = useState(0);
   const [inputValue, setInputValue] = useState("");
@@ -76,6 +78,7 @@ const UsersAutocompleteInput = ({
 
   return (
     <AutocompleteInput
+      isDisabled={isDisabled}
       onChangeText={setInputValue}
       renderItem={({ item }) => {
         const selected = users.findIndex(({ id }) => id === item.id) >= 0;
@@ -96,7 +99,7 @@ const UsersAutocompleteInput = ({
               </VStack>
             </Flex>
             <IconButton
-              disabled={selected}
+              disabled={isDisabled || selected}
               name={selected ? "check-circle" : "plus-circle"}
               onPress={() => {
                 onUserPress(item);
