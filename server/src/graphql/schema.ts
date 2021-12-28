@@ -5,6 +5,26 @@ import { User } from "../entity/User";
 import { gql } from "apollo-server";
 
 export const typeDefs = gql`
+  interface OffsetPagination {
+    offset: Int
+    totalCount: Int!
+    limit: Int!
+  }
+
+  type UserPagination implements OffsetPagination {
+    records: [User]!
+    offset: Int
+    totalCount: Int!
+    limit: Int!
+  }
+
+  type LocationPagination implements OffsetPagination {
+    records: [Location]!
+    offset: Int
+    totalCount: Int!
+    limit: Int!
+  }
+
   type TourStopMember {
     id: ID!
     user: User!
@@ -64,6 +84,12 @@ export const typeDefs = gql`
     tour(id: ID!): Tour
     tourLocation(id: ID!): TourLocation
     location(id: ID!): Location
+    paginatedUsers(searchTerm: String!, limit: Int, offset: Int): UserPagination
+    paginatedLocations(
+      searchTerm: String!
+      limit: Int
+      offset: Int
+    ): LocationPagination
   }
 `;
 
@@ -81,11 +107,46 @@ const createEntityResolver =
       .loadOne();
   };
 
+const createOffsetEntityResolver =
+  (type) => async (_parent, args, context, info) => {
+    const { searchTerm, limit = 20, offset = 0 } = args;
+    const { loader } = context;
+
+    const [records, totalCount] = await loader
+      .loadEntity(type)
+      .info(info, "records")
+      .search({
+        searchText: searchTerm,
+        searchColumns: ["name", "username"],
+      })
+      .paginate({ limit, offset })
+      .loadPaginated();
+
+    let nextOffset = offset + records.length + 1;
+
+    if (totalCount <= nextOffset) {
+      nextOffset = null;
+    }
+
+    if (totalCount === 0) {
+      nextOffset = null;
+    }
+
+    return {
+      records,
+      offset: nextOffset,
+      totalCount,
+      limit,
+    };
+  };
+
 export const resolvers = {
   Query: {
     user: createEntityResolver(User),
     tour: createEntityResolver(Tour),
     tourLocation: createEntityResolver(TourLocation),
     location: createEntityResolver(Location),
+    paginatedUsers: createOffsetEntityResolver(User),
+    paginatedLocations: createOffsetEntityResolver(Location),
   },
 };
