@@ -1,3 +1,4 @@
+import { Invite } from "../entity/Invite";
 import { Location } from "../entity/Location";
 import { Tour } from "../entity/Tour";
 import { TourLocation } from "../entity/TourLocation";
@@ -82,6 +83,7 @@ export const typeDefs = gql`
 
   type Query {
     user(id: ID!): User
+    currentUser: User
     tour(id: ID!): Tour
     tourLocation(id: ID!): TourLocation
     location(id: ID!): Location
@@ -97,15 +99,13 @@ export const typeDefs = gql`
   input CreateTourTourMemberInput {
     "The user id used as the foreign key on the new TourMember model."
     id: ID!
-    "Gives the TourMember elevated privileges for the Tour model."
-    admin: Boolean
   }
 
   "The createTour mutation input in order to create a new Tour model."
   input CreateTourInput {
     "The name of the new Tour."
     name: String!
-    "The list of users added to the Tour as new TourMembers models."
+    "The list of users to invite to join as TourMembers"
     tourMembers: [CreateTourTourMemberInput]!
   }
 
@@ -173,12 +173,13 @@ const createOffsetEntityResolver =
 
 export const resolvers = {
   Query: {
-    user: createEntityResolver(User),
-    tour: createEntityResolver(Tour),
-    tourLocation: createEntityResolver(TourLocation),
+    currentUser: (_parent, _args, context, _info) => context.user,
     location: createEntityResolver(Location),
     paginatedUsers: createOffsetEntityResolver(User),
     paginatedLocations: createOffsetEntityResolver(Location),
+    tour: createEntityResolver(Tour),
+    tourLocation: createEntityResolver(TourLocation),
+    user: createEntityResolver(User),
   },
   Mutation: {
     createTour: async (_parent, args, context) => {
@@ -192,22 +193,24 @@ export const resolvers = {
           let tour = new Tour();
           tour.name = name;
 
-          const tourMemberModels = tourMembers.map((tourMember) => {
-            const tourMemberModel = new TourMember();
-            tourMemberModel.user = tourMember.id;
-            tourMemberModel.admin = tourMember.admin;
-            return tourMember;
-          });
-
           const userTourMember = new TourMember();
           userTourMember.user = user;
           userTourMember.admin = true;
-
-          tourMemberModels.push(userTourMember);
-
-          tour.tourMembers = tourMemberModels;
+          tour.tourMembers = Promise.resolve([userTourMember]);
 
           tour = await manager.save(tour);
+
+          const invites = tourMembers.map((tourMember) => {
+            const invite = new Invite();
+            invite.invitee = tourMember.id;
+            invite.inviter = user.id;
+            invite.invitedAt = new Date();
+            invite.targetType = "Tour";
+            invite.targetId = tour.id;
+            return invite;
+          });
+
+          await manager.save(invites);
 
           return {
             success: true,

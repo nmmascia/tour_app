@@ -14,11 +14,55 @@ import { createConnection } from "typeorm";
 import { join } from "path";
 import { readFileSync } from "fs";
 
-const createUser = () => {
-  const user = new User();
-  user.username = "dwallace";
-  user.name = "David Wallace";
-  return user;
+const createUsers = async (manager) => {
+  const users = [
+    {
+      username: "david_wallace",
+      name: "David Wallace",
+      imageName: "d_wallace.jpeg",
+      image: readFileSync(
+        join(__dirname, "../../test/resource/images/users/d_wallace.jpeg")
+      ),
+    },
+    {
+      username: "little_kid_lover",
+      name: "Michael Scott",
+      imageName: "m_scott.jpeg",
+      image: readFileSync(
+        join(__dirname, "../../test/resource/images/users/m_scott.jpeg")
+      ),
+    },
+    {
+      username: "whupf_guy",
+      name: "Ryan Howard",
+      imageName: "r_howard.jpeg",
+      image: readFileSync(
+        join(__dirname, "../../test/resource/images/users/r_howard.jpeg")
+      ),
+    },
+  ];
+
+  const result = await manager.save(
+    users.map((usr) => {
+      const user = new User();
+      user.username = usr.username;
+      user.name = usr.name;
+      return user;
+    })
+  );
+
+  users.forEach(async ({ image, imageName }, index) => {
+    let photo = new Photo();
+    photo.targetType = "User";
+    photo.targetId = result[index].id;
+    await photo.upload({
+      file: image,
+      name: imageName,
+    });
+    await manager.save(photo);
+  });
+
+  return result;
 };
 
 const tours = [
@@ -48,20 +92,7 @@ const main = async () => {
   const connection = await createConnection();
   const { manager } = connection;
   // await connection.transaction(async (manager) => {
-  let user = createUser();
-  user = await manager.save(user);
-
-  let image = readFileSync(
-    join(__dirname, `../../test/resource/user_one.jpeg`)
-  );
-  let photo = new Photo();
-  photo.targetType = "User";
-  photo.targetId = user.id;
-  await photo.upload({
-    file: image,
-    name: "user_one.jpeg",
-  });
-  await manager.save(photo);
+  const [user] = await createUsers(manager);
 
   tours.forEach(async (t) => {
     let tour = new Tour();
@@ -86,7 +117,7 @@ const main = async () => {
       tourLocation = await manager.save(tourLocation);
 
       let image = readFileSync(
-        join(__dirname, `../../test/resource/${t.id}/location.jpeg`)
+        join(__dirname, `../../test/resource/images/${t.id}/location.jpeg`)
       );
       let photo = new Photo();
       photo.targetType = "Location";
@@ -98,7 +129,7 @@ const main = async () => {
       await manager.save(photo);
 
       image = readFileSync(
-        join(__dirname, `../../test/resource/${t.id}/image_one.jpeg`)
+        join(__dirname, `../../test/resource/images/${t.id}/image_one.jpeg`)
       );
       photo = new Photo();
       photo.targetType = "TourLocation";
@@ -111,7 +142,7 @@ const main = async () => {
       await manager.save(photo);
 
       image = readFileSync(
-        join(__dirname, `../../test/resource/${t.id}/image_two.jpeg`)
+        join(__dirname, `../../test/resource/images/${t.id}/image_two.jpeg`)
       );
       photo = new Photo();
       photo.targetType = "TourLocation";

@@ -8,6 +8,7 @@ import {
   getRepository,
 } from "typeorm";
 
+import { Invite } from "./Invite";
 import { Photo } from "./Photo";
 import { TourMember } from "./TourMember";
 
@@ -39,5 +40,17 @@ export class User {
       })
       .andWhere("photo.targetType = :targetType", { targetType: "User" })
       .getOne();
+  }
+
+  async pendingInvites(): Promise<Invite[]> {
+    return await getRepository(Invite)
+      .createQueryBuilder("invite")
+      .where("invite.inviteeId = :inviteeId", {
+        inviteeId: this.id,
+      })
+      .andWhere("invite.status = :inviteStatus", {
+        inviteStatus: "pending",
+      })
+      .getMany();
   }
 }
