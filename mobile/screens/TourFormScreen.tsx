@@ -13,6 +13,7 @@ import {
 
 import FormSubmitButton from "../components/FormSubmitButton";
 import IconButton from "../components/IconButton";
+import { TourScreenProps } from "../types";
 import UsersAutocompleteInput from "../components/UsersAutocompleteInput";
 import client from "../api/client";
 import { gql } from "graphql-request";
@@ -55,7 +56,7 @@ const mutation = gql`
   }
 `;
 
-const TourFormScreen = ({ navigation }) => {
+const TourFormScreen = ({ navigation }: TourScreenProps<"TourFormScreen">) => {
   const [formState, setFormState] = useState<FormState>({
     name: "",
     tourMembers: [],
@@ -74,17 +75,9 @@ const TourFormScreen = ({ navigation }) => {
           const { tour } = createTour;
           if (tour) {
             const { id, name } = tour;
-            /*
-              Todo(Nick)
-              How do we reset the previous navigation
-              stack when we navigate to the Tour page?
-            */
-            navigation.navigate("Tour", {
-              screen: "TourHome",
-              params: {
-                tourId: id.toString(),
-                tourName: name,
-              },
+            navigation.replace("TourHome", {
+              tourId: id.toString(),
+              tourName: name,
             });
           }
         }

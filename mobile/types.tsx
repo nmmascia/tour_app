@@ -53,6 +53,7 @@ export type ScreenParamList = {
     tourLocationId: string;
     tourLocationName: string;
   };
+  TourFormScreen: undefined;
 };
 
 export type RootTabScreenProps<Screen extends keyof RootTabParamList> =
