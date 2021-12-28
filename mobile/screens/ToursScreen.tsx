@@ -10,7 +10,7 @@ import { useState } from "react";
 
 const query = gql`
   query UserTours {
-    user(id: 1) {
+    currentUser {
       id
       username
       name

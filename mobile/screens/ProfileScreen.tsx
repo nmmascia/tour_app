@@ -10,8 +10,8 @@ import { gql } from "graphql-request";
 import { useQuery } from "react-query";
 
 const query = gql`
-  query User {
-    user(id: 1) {
+  query CurrentUser {
+    currentUser {
       id
       username
       avatar {
@@ -31,7 +31,7 @@ const query = gql`
 `;
 
 const ProfileScreen = ({ navigation }: RootTabScreenProps<"Home">) => {
-  const { data, isLoading } = useQuery("User", async () =>
+  const { data, isLoading } = useQuery("CurrentUser", async () =>
     client.request(query)
   );
 

@@ -30,7 +30,6 @@ interface FormState {
     };
     name?: string;
     username: string;
-    admin: boolean;
   }>;
 }
 
@@ -123,13 +122,13 @@ const TourFormScreen = ({ navigation }: TourScreenProps<"TourFormScreen">) => {
           onUserPress={(item) => {
             setFormState((state) => ({
               ...state,
-              tourMembers: [...state.tourMembers, { ...item, admin: false }],
+              tourMembers: [...state.tourMembers, item],
             }));
           }}
         />
         <VStack>
           {tourMembers.map((item, index) => {
-            const { id, name, username, avatar, admin } = item;
+            const { id, name, username, avatar } = item;
 
             return (
               <Flex
@@ -146,25 +145,33 @@ const TourFormScreen = ({ navigation }: TourScreenProps<"TourFormScreen">) => {
                   <Heading size="xs">{username}</Heading>
                   <Text>{name}</Text>
                 </VStack>
-                <Switch
-                  isDisabled={isLoading}
-                  size="md"
-                  isChecked={admin}
-                  onToggle={() => {
-                    setFormState((state) => {
-                      const { tourMembers } = state;
-                      const nextTourMembers = [...tourMembers];
-                      nextTourMembers[index] = {
-                        ...nextTourMembers[index],
-                        admin: !admin,
-                      };
-                      return {
-                        ...state,
-                        tourMembers: nextTourMembers,
-                      };
-                    });
-                  }}
-                />
+                {/* 
+                  Todo(Nick)
+                  There isn't much benefit to adding admins
+                  when creating a Tour since we'll need to send
+                  invites to join. We can move this widget to
+                  a Tour settings page.
+
+                    <Switch
+                    isDisabled={isLoading}
+                    size="md"
+                    isChecked={admin}
+                    onToggle={() => {
+                      setFormState((state) => {
+                        const { tourMembers } = state;
+                        const nextTourMembers = [...tourMembers];
+                        nextTourMembers[index] = {
+                          ...nextTourMembers[index],
+                          admin: !admin,
+                        };
+                        return {
+                          ...state,
+                          tourMembers: nextTourMembers,
+                        };
+                      });
+                    }}
+                  />
+                */}
                 <IconButton
                   disabled={isLoading}
                   name="times-circle"
